@@ -10,7 +10,7 @@ service:
   type: LoadBalancer # Changed from ClusterIP so AWS creates a URL for you
   port: 80
 
-# Keep your ingress as is if you are using an Ingress Controller, 
+# Keep your  check.. ingress as is if you are using an Ingress Controller, 
 # but LoadBalancer is the "failsafe" way for your project demo.
 ingress:
   enabled: true
@@ -21,4 +21,4 @@ ingress:
     - host: go-web-app.local
       paths:
         - path: /
-          pathType: Prefix
+          pathType: Prefix   
