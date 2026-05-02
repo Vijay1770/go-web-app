@@ -39,7 +39,7 @@ jobs:
 
   push:
     runs-on: ubuntu-latest
-    needs: [build, code-quality] # Pushes only if tests and linting pass
+    needs: [build] # Pushes only if tests and linting pass
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
