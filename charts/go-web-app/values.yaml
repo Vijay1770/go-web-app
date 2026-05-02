@@ -1,20 +1,18 @@
-# Default values for go-web-app-chart.
-
 replicaCount: 1
 
 image:
-  # Updated to your Docker Hub repository
   repository: vijay17700/go-web-app
   pullPolicy: IfNotPresent
   # Updated to the tag you verified is running (v1)
   tag: "25249738130"
 
 service:
-  type: ClusterIP
+  type: LoadBalancer # Changed from ClusterIP so AWS creates a URL for you
   port: 80
 
+# Keep your ingress as is if you are using an Ingress Controller, 
+# but LoadBalancer is the "failsafe" way for your project demo.
 ingress:
-  # Set to true to allow access via your local URL
   enabled: true
   className: "nginx"
   annotations: 
