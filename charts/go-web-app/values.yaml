@@ -4,7 +4,7 @@ image:
   repository: vijay17700/go-web-app
   pullPolicy: IfNotPresent
   # Updated to the tag you verified is running (v1)
-  tag: "25249738130"
+  tag: "25255606498"
 
 service:
   type: LoadBalancer # Changed from ClusterIP so AWS creates a URL for you
