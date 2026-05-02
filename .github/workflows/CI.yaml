@@ -9,7 +9,6 @@ on:
       - "README.md"
 
 env:
-  # This fixes the Node.js deprecation warnings
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -21,15 +20,34 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.22"
-          cache: false 
       - name: Build
         run: go build -o go-web-app
       - name: Test
         run: go test ./...
 
-  push:
+  code-quality:
     runs-on: ubuntu-latest
     needs: build
+    # continue-on-error ensures that linter issues don't stop the push/helm jobs
+    continue-on-error: true 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: false
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          # Using a newer version compatible with Go 1.22
+          version: v1.59
+          args: --timeout=5m --issues-exit-code=0
+
+  push:
+    runs-on: ubuntu-latest
+    # We only 'need' build. We don't wait for code-quality to keep the pipeline fast.
+    needs: build 
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -44,7 +62,6 @@ jobs:
         with:
           context: .
           push: true
-          # Note: vijay17700 must match your secret
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/go-web-app:${{ github.run_id }}
 
   update-newtag-in-helm-chart:
@@ -57,7 +74,7 @@ jobs:
       - name: Update tag in Helm chart
         run: |
           sed -i 's/tag: .*/tag: "${{ github.run_id }}"/' charts/go-web-app/values.yaml
-      - name: Commit and push
+      - name: Commit and push changes
         run: |
           git config --global user.email "vijaygour@example.com"
           git config --global user.name "Vijay Gour"
