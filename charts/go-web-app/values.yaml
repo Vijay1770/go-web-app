@@ -1,0 +1,26 @@
+# Default values for go-web-app-chart.
+
+replicaCount: 1
+
+image:
+  # Updated to your Docker Hub repository
+  repository: vijay17700/go-web-app
+  pullPolicy: IfNotPresent
+  # Updated to the tag you verified is running (v1)
+  tag: "v1"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  # Set to true to allow access via your local URL
+  enabled: true
+  className: "nginx"
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: go-web-app.local
+      paths:
+        - path: /
+          pathType: Prefix
